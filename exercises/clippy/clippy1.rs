@@ -10,10 +10,10 @@
 // hint.
 
 
-use std::f32;
+use std::f32::consts::PI;
 
 fn main() {
-    let pi = f32::consts::PI;
+    let pi = PI;
     let radius = 5.00f32;
 
     let area = pi * f32::powi(radius, 2);

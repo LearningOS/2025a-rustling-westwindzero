@@ -1,6 +1,6 @@
 /*
-    heap
-    This question requires you to implement a binary heap function
+	heap
+	This question requires you to implement a binary heap function
 */
 
 use std::cmp::Ord;
@@ -40,10 +40,14 @@ where
         self.count += 1;
 
         let mut idx = self.count;
-        while idx > 1 && (self.comparator)(&self.items[idx], &self.items[self.parent_idx(idx)]) {
-            let parent_idx = self.parent_idx(idx);
-            self.items.swap(idx, parent_idx);
-            idx = self.parent_idx(idx);
+        while idx > 1 {
+            let parent = self.parent_idx(idx);
+            if (self.comparator)(&self.items[idx], &self.items[parent]) {
+                self.items.swap(idx, parent);
+                idx = parent;
+            } else {
+                break;
+            }
         }
     }
 
@@ -66,10 +70,24 @@ where
     fn smallest_child_idx(&self, idx: usize) -> usize {
         let left = self.left_child_idx(idx);
         let right = self.right_child_idx(idx);
-        if right > self.count || (self.comparator)(&self.items[left], &self.items[right]) {
+
+        if right > self.count {
+            left
+        } else if (self.comparator)(&self.items[left], &self.items[right]) {
             left
         } else {
             right
+        }
+    }
+    fn bubble_down(&mut self, mut idx: usize) {
+        while self.children_present(idx) {
+            let child = self.smallest_child_idx(idx);
+            if (self.comparator)(&self.items[child], &self.items[idx]) {
+                self.items.swap(child, idx);
+                idx = child;
+            } else {
+                break;
+            }
         }
     }
 }
@@ -99,26 +117,14 @@ where
         if self.is_empty() {
             return None;
         }
-
-        let root = self.items.swap_remove(1);
+        let result = self.items.swap_remove(1);
         self.count -= 1;
-
-        if self.is_empty() {
-            return Some(root);
+        if !self.is_empty() {
+            self.bubble_down(1);
         }
-
-        let mut idx = 1;
-        while self.children_present(idx) {
-            let smallest_child_idx = self.smallest_child_idx(idx);
-            if (self.comparator)(&self.items[idx], &self.items[smallest_child_idx]) {
-                break;
-            }
-            self.items.swap(idx, smallest_child_idx);
-            idx = smallest_child_idx;
-        }
-
-        Some(root)
+        Some(result)
     }
+
 }
 
 pub struct MinHeap;
