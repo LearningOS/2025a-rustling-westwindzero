@@ -23,12 +23,10 @@ pub struct ReportCard<T> {
     pub student_age: u8,
 }
 
-impl<T: std::fmt::Display> ReportCard<T> {
+impl <T: std::fmt::Display>ReportCard<T> {
     pub fn print(&self) -> String {
-        format!(
-            "{} ({}) - achieved a grade of {}",
-            &self.student_name, &self.student_age, &self.grade
-        )
+        format!("{} ({}) - achieved a grade of {}",
+            &self.student_name, &self.student_age, &self.grade)
     }
 }
 
@@ -53,7 +51,7 @@ mod tests {
     fn generate_alphabetic_report_card() {
         // TODO: Make sure to change the grade here after you finish the exercise.
         let report_card = ReportCard {
-            grade: "A+",
+            grade: "A+".to_string(),
             student_name: "Gary Plotter".to_string(),
             student_age: 11,
         };
