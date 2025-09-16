@@ -1,6 +1,6 @@
 /*
-	queue
-	This question requires you to use queues to implement the functionality of the stac
+    queue
+    This question requires you to use queues to implement the functionality of the stac
 */
 
 #[derive(Debug)]
@@ -51,53 +51,62 @@ impl<T> Default for Queue<T> {
     }
 }
 
-pub struct myStack<T>
-{
-	//TODO
-	q1:Queue<T>,
-	q2:Queue<T>
+pub struct myStack<T> {
+    tag: bool,
+    size: usize,
+    q1: Queue<T>,
+    q2: Queue<T>,
 }
 impl<T> myStack<T> {
     pub fn new() -> Self {
         Self {
-			//TODO
-			q1:Queue::<T>::new(),
-			q2:Queue::<T>::new()
+            tag: true,
+            size: 0,
+            q1: Queue::<T>::new(),
+            q2: Queue::<T>::new(),
         }
     }
     pub fn push(&mut self, elem: T) {
-        //TODO
-        self.q2.enqueue(elem);
-
-        while !self.q1.is_empty() {
-            let val = self.q1.dequeue().unwrap();
-            self.q2.enqueue(val);
+        if self.tag {
+            self.q1.enqueue(elem);
+        } else {
+            self.q2.enqueue(elem);
         }
-
-        std::mem::swap(&mut self.q1, &mut self.q2);
+        self.size += 1;
     }
     pub fn pop(&mut self) -> Result<T, &str> {
-        if self.q1.is_empty() {
-            Err("Stack is empty")
+        if 0 == self.size {
+            return Err("Stack is empty");
+        }
+        if self.tag {
+            while self.q1.size() > 1 {
+                self.q2.enqueue(self.q1.dequeue().unwrap());
+            }
+            self.tag = false;
+            self.size -= 1;
+            return Ok(self.q1.dequeue().unwrap());
         } else {
-            self.q1.dequeue()
+            while self.q2.size() > 1 {
+                self.q1.enqueue(self.q2.dequeue().unwrap());
+            }
+            self.tag = true;
+            self.size -= 1;
+            return Ok(self.q2.dequeue().unwrap());
         }
     }
-
-
     pub fn is_empty(&self) -> bool {
-        self.q1.is_empty()
+        0 == self.size
     }
 }
 
 #[cfg(test)]
 mod tests {
-	use super::*;
-	
-	#[test]
-	fn test_queue(){
-		let mut s = myStack::<i32>::new();
-		assert_eq!(s.pop(), Err("Stack is empty"));
+    use super::*;
+
+    #[test]
+    fn test_queue() {
+        let mut s = myStack::<i32>::new();
+        assert_eq!(s.pop(), Err("Stack is empty"));
         s.push(1);
         s.push(2);
         s.push(3);
@@ -111,5 +120,5 @@ mod tests {
         assert_eq!(s.pop(), Ok(1));
         assert_eq!(s.pop(), Err("Stack is empty"));
         assert_eq!(s.is_empty(), true);
-	}
+    }
 }

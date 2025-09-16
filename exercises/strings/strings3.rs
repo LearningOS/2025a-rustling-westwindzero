@@ -4,21 +4,16 @@
 // hint.
 
 
-use std::arch::x86_64::_mm_minpos_epu16;
-
 fn trim_me(input: &str) -> String {
     input.trim().to_string()
 }
 
 fn compose_me(input: &str) -> String {
-    let mut s = String::from(input);
-    s.push_str(" world!");
-    s
+    format!("{} world!", input)
 }
 
 fn replace_me(input: &str) -> String {
-    String::from(input).replace("cars", "balloons")
-
+    input.replace("cars", "balloons")
 }
 
 #[cfg(test)]
